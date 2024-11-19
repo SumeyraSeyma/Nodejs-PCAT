@@ -14,12 +14,12 @@ app.set('view engine', 'ejs');
 
 //Middleware
 app.use(express.static('public'));
-app.use(express.json());//verileri json formatında almak için
-app.use(express.urlencoded({ extended: true }));//girilen verileri almak için
+app.use(express.json()); //verileri json formatında almak için
+app.use(express.urlencoded({ extended: true })); //girilen verileri almak için
 
 //Routes
 app.get('/', async (req, res) => {
-  const photos = await Photo.find({})
+  const photos = await Photo.find({});
   res.render('index', { photos });
 });
 
@@ -31,8 +31,9 @@ app.get('/add', (req, res) => {
   res.render('add');
 });
 
-app.get('/video-page', (req, res) => {
-  res.render('video-page');
+app.get('/photos/:id', async (req, res) => {
+  const photo = await Photo.findById(req.params.id);
+  res.render('photo', { photo });
 });
 
 app.post('/photos', async (req, res) => {
