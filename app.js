@@ -20,7 +20,7 @@ app.use(express.static('public'));
 app.use(express.json()); //verileri json formatında almak için
 app.use(express.urlencoded({ extended: true })); //girilen verileri almak için
 app.use(fileUpload());
-app.use(methodOverride('_method')); //put ve delete işlemleri için
+app.use(methodOverride('_method', { methods: ['POST', 'GET'] })); //put ve delete işlemleri için
 
 //Routes
 app.get('/', async (req, res) => {
@@ -70,6 +70,14 @@ app.put('/photos/:id', async (req, res) => {
   photo.description = req.body.description;
   photo.save();
   res.redirect(`/photos/${req.params.id}`);
+});
+
+app.delete('/photos/:id', async (req, res) => {
+  const photo = await Photo.findOne({ _id: req.params.id });
+  let deletedImage = __dirname + '/public' + photo.image;
+  fs.unlinkSync(deletedImage);
+  await Photo.findByIdAndDelete(req.params.id);
+  res.redirect('/');
 });
 
 const port = 3000;
